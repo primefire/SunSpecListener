@@ -6,11 +6,28 @@ const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 
-let clientIP = '192.168.0.43';
-let clientPort = 502;
+const fs = require('fs');
 
-http.listen(3010, function(){
-    console.log('Server listening on port 3010');
+let config = JSON.parse(fs.readFileSync('config.json'));
+if (config.modbusIpAddress == null) {
+    console.error("Inverter Modbus IP address not configured");
+    process.exit(1);
+}
+if (config.modbusPort == null) {
+    console.error("Inverter Modbus port not configured");
+    process.exit(1);
+}
+if (config.port == null) {
+    console.error("port not configured");
+    process.exit(1);
+}
+
+let clientIP = config.modbusIpAddress;
+let clientPort = config.modbusPort;
+let port = config.port;
+
+http.listen(port, function(){
+    console.log('Server listening on port', port);
 });
 
 io.on('connection', function(socket){
