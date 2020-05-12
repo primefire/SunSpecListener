@@ -1,4 +1,5 @@
 {
   "modbusIpAddress":"",
-  "modbusPort":0
+  "modbusPort":0,
+  "port":0
 }
