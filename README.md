@@ -37,4 +37,4 @@ Enter a port for this server to run on.
 I recommend using pm2. You can find more information on pm2 and an installation guide [here](https://pm2.keymetrics.io/docs/usage/quick-start/).
 
 Once you have pm2 installed, start the server using the following command `pm2 start sunspeclistener.js`.
-You can always just start the server using `node index.js` for testing purposes.
+You can always just start the server using `node sunspeclistener.js` for testing purposes.
