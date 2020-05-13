@@ -37,6 +37,9 @@ io.on('connection', function(socket){
 client.connectTCP(clientIP, { port: clientPort });
 client.setID(1);
 console.log(`connected to Inverter at ${clientIP}:${clientPort}`);
+/*
+
+//old solution - resulted in errors since power and scalefactor are not read at exactly the same time
 
 setInterval(function() {
     let power = 0;
@@ -58,6 +61,21 @@ setInterval(function() {
             console.log("Aktuelle Produktion:", production, "W")
             io.emit('currentProduction', production);
         });
+    });
+}, 1000);
+*/
+
+setInterval(function() {
+    let power = 0;
+    let scalefactor = 0;
+    let production = 0;
+    client.readHoldingRegisters(40083, 2, function(err, data) {
+        if (err) console.error(err)
+        let power = convertResult(data.data[0]);
+        let scalefactor = convertResult(data.data[1]);
+        let production = power * Math.pow(10, scalefactor);
+        console.log(production,"W")
+        io.emit('currentProduction', production);
     });
 }, 1000);
 
