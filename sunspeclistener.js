@@ -38,7 +38,10 @@ client.connectTCP(clientIP, { port: clientPort });
 client.setID(1);
 console.log(`connected to Inverter at ${clientIP}:${clientPort}`);
 
+let fiveMinuteHistory = []
+
 setInterval(function() {
+    //current power
     client.readHoldingRegisters(40083, 2, function(err, data) {
         if (err) console.error(err)
         let power = convertResult(data.data[0]);
@@ -46,6 +49,29 @@ setInterval(function() {
         let production = power * Math.pow(10, scalefactor);
         console.log(production,"W")
         io.emit('currentProduction', production);
+        fiveMinuteHistory.push(production);
+        if (fiveMinuteHistory.length > 300) {
+            fiveMinuteHistory.shift();
+        }
+        let fiveMinuteTotal = 0;
+        fiveMinuteHistory.forEach((element) => {
+            fiveMinuteTotal += element;
+        })
+        let fiveMinuteAverage = fiveMinuteTotal/fiveMinuteHistory.length;
+        console.log(fiveMinuteAverage, "AVG")
+        console.log(fiveMinuteHistory.length, "length")
+    });
+
+    //total power
+    client.readHoldingRegisters(40093, 3, function(err, data) {
+        if (err) console.error(err)
+        let producedBinary = `${data.data[0].toString(2)}${data.data[1].toString(2)}`
+        let producedNumber = parseInt(producedBinary, 2);
+        
+        let scalefactor = convertResult(data.data[2]);
+        let produced = producedNumber * Math.pow(10, scalefactor);
+        console.log(produced, "Wh");
+        io.emit('totalProduction', produced);
     });
 }, 1000);
 
