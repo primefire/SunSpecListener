@@ -38,16 +38,41 @@ client.connectTCP(clientIP, { port: clientPort });
 client.setID(1);
 console.log(`connected to Inverter at ${clientIP}:${clientPort}`);
 
-setInterval(() => {
-    //current power
-    client.readHoldingRegisters(40083, 2, function(err, data) {
-        if (err) console.error(err)
-        let power = convertResult(data.data[0]);
-        let scalefactor = convertResult(data.data[1]);
-        let production = power * Math.pow(10, scalefactor);
-        console.log(production,"W")
-        io.emit('currentProduction', production);
-    });
+setInterval(async () => {
+    //current production power
+    let powerData = await client.readHoldingRegisters(40083, 2) 
+    let powerAmount = convertResult(powerData.data[0]);
+    let powerScaleFactor = convertResult(powerData.data[1]);
+    let powerProduction = powerAmount * Math.pow(10, powerScaleFactor);
+
+    //current production amperage    
+    let amperageData = await client.readHoldingRegisters(40071, 5) 
+    let amperageAmount = convertResult(amperageData.data[0]);
+    let amperageScaleFactor = convertResult(amperageData.data[4]);
+    let amperageProduction = amperageAmount * Math.pow(10, amperageScaleFactor);
+    
+    //current production voltage
+    let voltageData = await client.readHoldingRegisters(40079, 4) 
+    let voltageAmount = convertResult(voltageData.data[0]);
+    let voltageScaleFactor = convertResult(voltageData.data[3]);
+    let voltageProduction = voltageAmount * Math.pow(10, voltageScaleFactor);
+    
+    console.log("")
+    let response = {
+        production: {
+            wattage: powerProduction,
+            voltage: voltageProduction,
+            amperage: amperageProduction
+        },
+        grid: {//todo
+            wattage: 0,
+            voltage: 0,
+            amperage: 0
+        }
+    }
+    console.log("current:");
+    console.log(response);
+    io.emit('current', response);
 }, 1000);
 
 setInterval(() => {
@@ -60,7 +85,8 @@ setInterval(() => {
         let scalefactor = convertResult(data.data[2]);
         let produced = producedNumber * Math.pow(10, scalefactor);
         console.log(produced, "Wh");
-        io.emit('totalProduction', produced);
+
+        io.emit('total', produced);
     });
 }, 60000)
 
