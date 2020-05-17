@@ -44,12 +44,6 @@ setInterval(async () => {
     let powerAmount = convertResult(powerData.data[0]);
     let powerScaleFactor = convertResult(powerData.data[1]);
     let powerProduction = powerAmount * Math.pow(10, powerScaleFactor);
-
-    //current production amperage    
-    let amperageData = await client.readHoldingRegisters(40071, 5) 
-    let amperageAmount = convertResult(amperageData.data[0]);
-    let amperageScaleFactor = convertResult(amperageData.data[4]);
-    let amperageProduction = amperageAmount * Math.pow(10, amperageScaleFactor);
     
     //current production voltage
     let voltageData = await client.readHoldingRegisters(40079, 4) 
@@ -62,7 +56,7 @@ setInterval(async () => {
         production: {
             wattage: powerProduction,
             voltage: voltageProduction,
-            amperage: amperageProduction
+            amperage: powerProduction/voltageProduction
         },
         grid: {//todo
             wattage: 0,
