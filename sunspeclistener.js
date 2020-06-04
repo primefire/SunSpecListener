@@ -43,7 +43,7 @@ setInterval(async () => {
 	let powerData = await client.readHoldingRegisters(40083, 2);
 	let powerAmount = convertResult(powerData.data[0]);
 	let powerScaleFactor = convertResult(powerData.data[1]);
-	let powerProduction = Math.floor(powerAmount * Math.pow(10, powerScaleFactor));
+	let powerProduction = parseInt(powerAmount * Math.pow(10, powerScaleFactor));
 
 	//current production voltage
 	let voltageData = await client.readHoldingRegisters(40079, 4);
@@ -78,7 +78,7 @@ setInterval(() => {
 		let producedNumber = parseInt(producedBinary, 2);
 
 		let scalefactor = convertResult(data.data[2]);
-		let produced = Math.floor(producedNumber * Math.pow(10, scalefactor));
+		let produced = parseInt(producedNumber * Math.pow(10, scalefactor));
 		console.log(produced, 'Wh');
 
 		io.emit('total', produced);
