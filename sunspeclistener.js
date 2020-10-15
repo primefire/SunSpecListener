@@ -51,6 +51,17 @@ setInterval(async () => {
 	let voltageScaleFactor = convertResult(voltageData.data[3]);
 	let voltageProduction = voltageAmount * Math.pow(10, voltageScaleFactor);
 
+	let gridData = await client.readHoldingRegisters(40206, 5);
+	let gridAmount = convertResult(gridData.data[0]);
+	let gridScaleFactor = convertResult(gridData.data[4]);
+	let grid = parseInt(gridAmount * Math.pow(10, gridScaleFactor));
+
+	let gridVoltageData = await client.readHoldingRegisters(40195, 9);
+	let gridVoltageBase = convertResult(gridVoltageData.data[0]);
+	let gridVoltageScaleFactor = convertResult(gridVoltageData.data[8]);
+	let gridVoltage = parseInt(gridVoltageBase * Math.pow(10, gridVoltageScaleFactor));
+	console.log(gridVoltage + ' V');
+
 	console.log('');
 	let response = {
 		production: {
@@ -59,10 +70,9 @@ setInterval(async () => {
 			amperage: powerProduction / voltageProduction,
 		},
 		grid: {
-			//todo
-			wattage: 0,
-			voltage: 0,
-			amperage: 0,
+			wattage: grid,
+			voltage: gridVoltage,
+			amperage: grid / gridVoltage,
 		},
 	};
 	console.log('current:');
