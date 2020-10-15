@@ -70,9 +70,9 @@ setInterval(async () => {
 			amperage: powerProduction / voltageProduction,
 		},
 		grid: {
-			wattage: grid,
+			wattage: grid * -1,
 			voltage: gridVoltage,
-			amperage: grid / gridVoltage,
+			amperage: (grid * -1) / gridVoltage,
 		},
 	};
 	console.log('current:');
