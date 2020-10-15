@@ -25,6 +25,7 @@ if (config.port == null) {
 let clientIP = config.modbusIpAddress;
 let clientPort = config.modbusPort;
 let port = config.port;
+let brokenEnergyMeter = config.brokenEnergyMeter;
 
 http.listen(port, function () {
 	console.log('Server listening on port', port);
@@ -53,6 +54,10 @@ setInterval(async () => {
 
 	let gridData = await client.readHoldingRegisters(40206, 5);
 	let gridAmount = convertResult(gridData.data[0]);
+	if (brokenEnergyMeter) {
+		gridAmount = convertResult(gridData.data[1]) - convertResult(gridData.data[2]) + convertResult(gridData.data[3]);
+	}
+
 	let gridScaleFactor = convertResult(gridData.data[4]);
 	let grid = parseInt(gridAmount * Math.pow(10, gridScaleFactor));
 
