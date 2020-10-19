@@ -61,11 +61,18 @@ setInterval(async () => {
 	let gridScaleFactor = convertResult(gridData.data[4]);
 	let grid = parseInt(gridAmount * Math.pow(10, gridScaleFactor));
 
+	//debug for energymeter
+
+	console.log('Phase 1: ' + parseInt(convertResult(gridData.data[1]) * Math.pow(10, gridScaleFactor)) + 'W');
+	console.log('Phase 2: ' + parseInt(convertResult(gridData.data[2]) * Math.pow(10, gridScaleFactor)) + 'W');
+	console.log('Phase 3: ' + parseInt(convertResult(gridData.data[3]) * Math.pow(10, gridScaleFactor)) + 'W');
+	console.log('Solar: ' + powerProduction + 'W');
+	console.log('Netz: ' + gridAmount + 'W');
+
 	let gridVoltageData = await client.readHoldingRegisters(40195, 9);
 	let gridVoltageBase = convertResult(gridVoltageData.data[0]);
 	let gridVoltageScaleFactor = convertResult(gridVoltageData.data[8]);
 	let gridVoltage = parseInt(gridVoltageBase * Math.pow(10, gridVoltageScaleFactor));
-	console.log(gridVoltage + ' V');
 
 	console.log('');
 	let response = {
@@ -80,8 +87,8 @@ setInterval(async () => {
 			amperage: (grid * -1) / gridVoltage,
 		},
 	};
-	console.log('current:');
-	console.log(response);
+	//console.log('current:');
+	//console.log(response);
 	io.emit('current', response);
 }, 1000);
 
