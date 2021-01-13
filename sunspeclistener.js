@@ -25,7 +25,6 @@ if (config.port == null) {
 let clientIP = config.modbusIpAddress;
 let clientPort = config.modbusPort;
 let port = config.port;
-let brokenEnergyMeter = config.brokenEnergyMeter;
 
 http.listen(port, function () {
 	console.log('Server listening on port', port);
@@ -54,20 +53,8 @@ setInterval(async () => {
 
 	let gridData = await client.readHoldingRegisters(40206, 5);
 	let gridAmount = convertResult(gridData.data[0]);
-	if (brokenEnergyMeter) {
-		gridAmount = convertResult(gridData.data[1]) - convertResult(gridData.data[2]) + convertResult(gridData.data[3]);
-	}
-
 	let gridScaleFactor = convertResult(gridData.data[4]);
 	let grid = parseInt(gridAmount * Math.pow(10, gridScaleFactor));
-
-	//debug for energymeter
-
-	console.log('Phase 1: ' + parseInt(convertResult(gridData.data[1]) * Math.pow(10, gridScaleFactor)) + 'W');
-	console.log('Phase 2: ' + parseInt(convertResult(gridData.data[2]) * Math.pow(10, gridScaleFactor)) + 'W');
-	console.log('Phase 3: ' + parseInt(convertResult(gridData.data[3]) * Math.pow(10, gridScaleFactor)) + 'W');
-	console.log('Solar: ' + powerProduction + 'W');
-	console.log('Netz: ' + gridAmount + 'W');
 
 	let gridVoltageData = await client.readHoldingRegisters(40195, 9);
 	let gridVoltageBase = convertResult(gridVoltageData.data[0]);
@@ -87,8 +74,7 @@ setInterval(async () => {
 			amperage: (grid * -1) / gridVoltage,
 		},
 	};
-	//console.log('current:');
-	//console.log(response);
+	console.log(response);
 	io.emit('current', response);
 }, 1000);
 
@@ -101,7 +87,7 @@ setInterval(() => {
 
 		let scalefactor = convertResult(data.data[2]);
 		let produced = parseInt(producedNumber * Math.pow(10, scalefactor));
-		console.log(produced, 'Wh');
+		console.log('Gesamt Produziert:', produced/1000, 'kWh');
 
 		io.emit('total', produced);
 	});
