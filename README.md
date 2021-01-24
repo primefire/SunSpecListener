@@ -1,40 +1,25 @@
 # SunSpecListener
-Queries SunSpec compatible solar inverters (e.g. SolarEdge) for the current solar power production and makes theses values available to other services.
 
-## Installation
-
-This server requires node.js with npm.
-[node.js installation guide](https://crycode.de/installation-von-node-js)
-
-Once you have node.js installed, just clone this repository and run `npm install`.
+Queries SunSpec compatible solar inverters (e.g. SolarEdge) using Modbus TCP for the current solar power production, current power import and current power export as well as total energy production, import and export.
+It then makes theses values available to other services via Socket.IO.
+(total import/export not yet implemented)
 
 ## Configuration
 
-Step 1: Edit `config.json`.
+Edit `.env`.
 
-```javascript
-{
-  "modbusIpAddress":"192.168.0.XXX",
-  "modbusPort":502,
-  "port":3010
-}
+```
+MODBUS_IP_ADDRESS=192.168.0.XXX
+MODBUS_PORT=502
+SOCKET_IO_PORT=3010
+CURRENT_POWER_INTERVAL_MS=1000
+TOTAL_ENERGY_EVERY_X_TIMES_OF_CURRENT_POWER_INTERVAL=5
 ```
 
-### Modbus IP-address
+## Installation
 
-Enter the local IP-Address of your Inverter.
+Install all required packages using `npm install`
 
-### Modbus Port
+Then build the project using `npm run build`
 
-Enter the Modbus-TCP port of your Inverter.
-
-### Port
-
-Enter a port for this server to run on.
-
-## Deployment
-
-I recommend using pm2. You can find more information on pm2 and an installation guide [here](https://pm2.keymetrics.io/docs/usage/quick-start/).
-
-Once you have pm2 installed, start the server using the following command `pm2 start sunspeclistener.js`.
-You can always just start the server using `node sunspeclistener.js` for testing purposes.
+Now you can start it using `node build/startSunSpecListener.js`
