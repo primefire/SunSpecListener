@@ -22,11 +22,11 @@ export default class SocketIoServer {
         this.httpServer.listen(this.port);
     }
 
-    sendCurrentPowerReading(reading: TotalPowerReading) {
+    sendCurrentPowerReading(reading: TotalPowerReading): void {
         this.io.emit('current', reading);
     }
 
-    sendTotalEnergyReading(reading: TotalEnergyReading) {
+    sendTotalEnergyReading(reading: TotalEnergyReading): void {
         this.io.emit('total', reading);
     }
 
