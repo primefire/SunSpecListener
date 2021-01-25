@@ -63,16 +63,21 @@ export default class StartupSolarController {
     }
 
     private async currentPowerInterval(): Promise<void> {
-        let currentData = await this.modbusController.getCurrentData();
-        this.socketIoServer.sendCurrentPowerReading(currentData);
-        console.log(currentData)
+        try {
+            let currentData = await this.modbusController.getCurrentData();
+            this.socketIoServer.sendCurrentPowerReading(currentData);
+            console.log(currentData)
 
-        if (this.intervalCounter === 0) {
-            let totalEnergy = await this.modbusController.getTotalEnergyData();
-            this.socketIoServer.sendTotalEnergyReading(totalEnergy);
-            console.log(totalEnergy);
+            if (this.intervalCounter === 0) {
+                let totalEnergy = await this.modbusController.getTotalEnergyData();
+                this.socketIoServer.sendTotalEnergyReading(totalEnergy);
+                console.log(totalEnergy);
+            }
+        } catch (e) {
+            console.error('Modbus request failed, restarting connection')
+            await this.modbusController.connectToModbusDevice();
         }
-
+        
         this.intervalCounter = (this.intervalCounter + 1) % Number(process.env.TOTAL_ENERGY_EVERY_X_TIMES_OF_CURRENT_POWER_INTERVAL);
     }
 
