@@ -1,8 +1,8 @@
 export default class EnergyReading {
-    energyProduced!: number;
-    energyImported!: number;
-    energyExported!: number;
-    timestamp!: Date;
+    energyProduced: number;
+    energyImported: number;
+    energyExported: number;
+    timestamp: Date;
 
     constructor(energyProduced: number, energyImported: number, energyExported: number, timestamp: Date, ) {
         this.energyProduced = energyProduced;
