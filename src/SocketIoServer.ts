@@ -1,6 +1,6 @@
 import express from 'express';
 import http from 'http';
-import SocketIO from 'socket.io';
+import SocketIO from "socket.io";
 import TotalEnergyReading from './Models/TotalEnergyReading';
 import TotalPowerReading from './Models/TotalPowerReading';
 
@@ -14,7 +14,7 @@ export default class SocketIoServer {
     constructor(port: number) {
         this.app = express();
         this.httpServer = http.createServer(this.app);
-        this.io = SocketIO(this.httpServer);
+        this.io = new SocketIO.Server(this.httpServer);
         this.port = port;
     }
 
