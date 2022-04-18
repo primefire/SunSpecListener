@@ -86,12 +86,13 @@ export default class StartupSolarController {
 		try {
 			let currentData = await this.modbusController.getCurrentData();
 			this.socketIoServer.sendCurrentPowerReading(currentData);
-			this.mqttController.sendCurrentPowerUpdate(currentData);
+			this.mqttController.sendCurrentPowerReading(currentData);
 			console.log(currentData);
 
 			if (this.intervalCounter === 0) {
 				let totalEnergy = await this.modbusController.getTotalEnergyData();
 				this.socketIoServer.sendTotalEnergyReading(totalEnergy);
+				this.mqttController.sendTotalEnergyReading(totalEnergy);
 				console.log(totalEnergy);
 			}
 		} catch (e) {

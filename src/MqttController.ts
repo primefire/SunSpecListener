@@ -1,4 +1,5 @@
 import mqtt from 'mqtt';
+import TotalEnergyReading from './Models/TotalEnergyReading';
 import TotalPowerReading from './Models/TotalPowerReading';
 
 const BASE_TOPIC = 'solaredge';
@@ -19,7 +20,11 @@ export default class MqttController {
 		});
 	}
 
-	async sendCurrentPowerUpdate(totalPowerReading: TotalPowerReading): Promise<void> {
+	async sendCurrentPowerReading(totalPowerReading: TotalPowerReading): Promise<void> {
 		this.client.publish(`${BASE_TOPIC}/${this.id}/current`, JSON.stringify(totalPowerReading));
+	}
+
+	async sendTotalEnergyReading(totalEnergyReading: TotalEnergyReading): Promise<void> {
+		this.client.publish(`${BASE_TOPIC}/${this.id}/total`, JSON.stringify(totalEnergyReading));
 	}
 }
